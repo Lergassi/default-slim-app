@@ -9,7 +9,7 @@ class MainController
 {
     public function homepage(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface
     {
-        $response->getBody()->write('/');
+        $response->getBody()->write(__FILE__);
 
         return $response;
     }

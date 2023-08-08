@@ -4,7 +4,9 @@ ini_set('error_reporting', E_ALL);
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 
+use App\Controllers\MainController;
 use App\Controllers\TestControllers\MainTestController;
+use DI\ContainerBuilder;
 use Dotenv\Dotenv;
 use Psr\Container\ContainerInterface;
 use Slim\Factory\AppFactory;
@@ -17,7 +19,7 @@ $dotenv->load();
 
 new InitCustomDumper();
 
-$containerBuilder = new \DI\ContainerBuilder();
+$containerBuilder = new ContainerBuilder();
 
 $containerBuilder->addDefinitions([
     PDO::class => function (ContainerInterface $container) {
@@ -41,7 +43,7 @@ $app->addErrorMiddleware(true, false, false);
 //----------------------------------------------------------------
 // main routes
 //----------------------------------------------------------------
-$app->get('/', \App\Controllers\MainController::class . ':homepage');
+$app->get('/', MainController::class . ':homepage');
 
 //----------------------------------------------------------------
 // todo: Только для dev.
