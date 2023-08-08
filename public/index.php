@@ -4,7 +4,9 @@ ini_set('error_reporting', E_ALL);
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 
+use App\Controllers\TestControllers\MainTestController;
 use Dotenv\Dotenv;
+use Psr\Container\ContainerInterface;
 use Slim\Factory\AppFactory;
 use Source\Debug\InitCustomDumper;
 
@@ -17,9 +19,21 @@ new InitCustomDumper();
 
 $containerBuilder = new \DI\ContainerBuilder();
 
-$container = $containerBuilder->build();
+$containerBuilder->addDefinitions([
+    PDO::class => function (ContainerInterface $container) {
+        return new \PDO(
+            sprintf('mysql:host=%s;dbname=%s', $_ENV['APP_DB_HOST'] ?? '', $_ENV['APP_DB_NAME'] ?? ''),
+            $_ENV['APP_DB_USER'] ?? '',
+            $_ENV['APP_DB_PASSWORD'] ?? '',
+            [
+                \PDO::ATTR_DEFAULT_FETCH_MODE => \PDO::FETCH_ASSOC,
+                \PDO::ATTR_STRINGIFY_FETCHES => false,
+            ]
+        );
+    },
+]);
 
-$app = AppFactory::createFromContainer($container);
+$app = AppFactory::createFromContainer($containerBuilder->build());
 
 //todo: Только для dev.
 $app->addErrorMiddleware(true, false, false);
@@ -30,9 +44,11 @@ $app->addErrorMiddleware(true, false, false);
 $app->get('/', \App\Controllers\MainController::class . ':homepage');
 
 //----------------------------------------------------------------
+// todo: Только для dev.
 // test routes
 //----------------------------------------------------------------
-$app->get('/test/dump', \App\Controllers\TestControllers\MainTestController::class . ':testDump');
-$app->get('/test/container', \App\Controllers\TestControllers\MainTestController::class . ':testContainer');
+$app->get('/test/dump', MainTestController::class . ':testDump');
+$app->get('/test/container', MainTestController::class . ':testContainer');
+$app->get('/test/pdo', MainTestController::class . ':testPdo');
 
 $app->run();

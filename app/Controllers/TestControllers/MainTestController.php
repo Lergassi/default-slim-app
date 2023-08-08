@@ -32,4 +32,11 @@ class MainTestController
 
         return $response;
     }
+
+    public function testPdo(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface
+    {
+        dump($this->container->get(\PDO::class));
+
+        return $response;
+    }
 }
