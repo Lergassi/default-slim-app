@@ -41,7 +41,9 @@ $app->get('/', MainController::class . ':homepage');
 // todo: Только для dev.
 // test routes
 //----------------------------------------------------------------
+//todo: В phpunit.
 $app->get('/test/dump', MainTestController::class . ':testDump');
+$app->get('/test/project_path', MainTestController::class . ':testProjectDir');
 $app->get('/test/container/file_definitions', ContainerTestController::class . ':testFileDefinitions');
 $app->get('/test/pdo', MainTestController::class . ':testPdo');
 
