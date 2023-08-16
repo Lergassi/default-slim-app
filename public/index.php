@@ -4,8 +4,8 @@ ini_set('error_reporting', E_ALL);
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 
-use App\Controllers\MainController;
-use App\Controllers\TestControllers\MainTestController;
+use App\Controller\MainController;
+use App\Controller\TestController\MainTestController;
 use DI\ContainerBuilder;
 use Dotenv\Dotenv;
 use Psr\Container\ContainerInterface;
@@ -20,20 +20,7 @@ $dotenv->load();
 new InitCustomDumper();
 
 $containerBuilder = new ContainerBuilder();
-
-$containerBuilder->addDefinitions([
-    PDO::class => function (ContainerInterface $container) {
-        return new \PDO(
-            sprintf('mysql:host=%s;dbname=%s', $_ENV['APP_DB_HOST'] ?? '', $_ENV['APP_DB_NAME'] ?? ''),
-            $_ENV['APP_DB_USER'] ?? '',
-            $_ENV['APP_DB_PASSWORD'] ?? '',
-            [
-                \PDO::ATTR_DEFAULT_FETCH_MODE => \PDO::FETCH_ASSOC,
-                \PDO::ATTR_STRINGIFY_FETCHES => false,
-            ]
-        );
-    },
-]);
+$containerBuilder->addDefinitions(__DIR__ . '/../app/container.php');
 
 $app = AppFactory::createFromContainer($containerBuilder->build());
 
@@ -50,7 +37,7 @@ $app->get('/', MainController::class . ':homepage');
 // test routes
 //----------------------------------------------------------------
 $app->get('/test/dump', MainTestController::class . ':testDump');
-$app->get('/test/container', MainTestController::class . ':testContainer');
+$app->get('/test/container/file_definitions', \App\Controller\TestController\ContainerTestController::class . ':testFileDefinitions');
 $app->get('/test/pdo', MainTestController::class . ':testPdo');
 
 $app->run();

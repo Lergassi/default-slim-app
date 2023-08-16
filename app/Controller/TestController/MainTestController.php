@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Controllers\TestControllers;
+namespace App\Controller\TestController;
 
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
