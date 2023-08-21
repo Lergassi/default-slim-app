@@ -8,7 +8,7 @@ use Psr\Http\Message\ServerRequestInterface;
 
 abstract class AbstractSandboxController
 {
-    public abstract function run(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface;
+    public abstract function main(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface;
 
     private ContainerInterface $container;
 
@@ -20,10 +20,5 @@ abstract class AbstractSandboxController
     public function __construct(ContainerInterface $container)
     {
         $this->container = $container;
-    }
-
-    public function main(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface
-    {
-        return $this->run($request, $response);
     }
 }

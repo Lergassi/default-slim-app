@@ -5,6 +5,7 @@ ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 
 use App\Controller\MainController;
+use App\Controller\Sandbox\MainSandboxController;
 use DI\ContainerBuilder;
 use Dotenv\Dotenv;
 use Slim\Factory\AppFactory;
@@ -36,6 +37,7 @@ $app->get('/', MainController::class . ':homepage');
 // todo: Только для dev.
 // sandbox routes
 //----------------------------------------------------------------
+$app->get('/sandbox', MainSandboxController::class . ':main');
 
 //----------------------------------------------------------------
 // todo: Только для dev.
