@@ -22,7 +22,10 @@ $dotenv->load();
 new InitCustomDumper();
 
 $containerBuilder = new ContainerBuilder();
-$containerBuilder->addDefinitions(__DIR__ . '/../app/container.php');
+$containerBuilder
+    ->addDefinitions(__DIR__ . '/../app/container.php')
+    ->useAttributes(true)
+;
 
 $container = $containerBuilder->build();
 

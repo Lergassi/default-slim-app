@@ -2,6 +2,7 @@
 
 namespace Source\Test\Controller;
 
+use DI\Attribute\Inject;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -9,14 +10,11 @@ use Source\ProjectPath;
 
 class MainTestController
 {
-    private ContainerInterface $container;
+    #[Inject] private ContainerInterface $container;
+    #[Inject] private ProjectPath $projectPath;
+    #[Inject] private \PDO $pdo;
 
-    public function __construct(ContainerInterface $container)
-    {
-        $this->container = $container;
-    }
-
-    public function testDump(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface
+    public function dump(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface
     {
         dump('Hello, World!');
         dd('Hello, World!');
@@ -24,36 +22,38 @@ class MainTestController
         return $response;
     }
 
-    public function testContainer(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface
+    public function inject(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface
     {
         dump([
             $this->container instanceof ContainerInterface,
-            'container was injected',
+            $this->projectPath instanceof ProjectPath,
+            $this->pdo instanceof \PDO,
         ]);
 
         return $response;
     }
 
-    public function testPdo(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface
+    public function projectPath(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface
     {
-        dump($this->container->get(\PDO::class));
-
-        return $response;
-    }
-
-    public function testProjectDir(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface
-    {
-        /** @var ProjectPath $projectPath */
-        $projectPath = $this->container->get(ProjectPath::class);
-
         dump([
-            $projectPath instanceof ProjectPath,
-            $projectPath->build(),
-            $projectPath->build(''),
-            $projectPath->build(0),
-            $projectPath->build('/'),
-            $projectPath->build('42'),
+            $this->projectPath instanceof ProjectPath,
+            $this->projectPath->build(),
+            $this->projectPath->build(''),
+            $this->projectPath->build(0),
+            $this->projectPath->build('/'),
+            $this->projectPath->build('42'),
         ]);
+
+        return $response;
+    }
+
+    public function env(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface
+    {
+        dump(
+            $this->container->get('app.name'),
+            $this->container->get('app.version'),
+            $this->container->get('app.env'),
+        );
 
         return $response;
     }

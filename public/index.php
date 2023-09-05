@@ -10,7 +10,6 @@ use DI\ContainerBuilder;
 use Dotenv\Dotenv;
 use Slim\Factory\AppFactory;
 use Source\Debug\InitCustomDumper;
-use Source\Test\Controller\ContainerTestController;
 use Source\Test\Controller\MainTestController;
 
 require __DIR__ . '/../vendor/autoload.php';
@@ -21,7 +20,10 @@ $dotenv->load();
 new InitCustomDumper();
 
 $containerBuilder = new ContainerBuilder();
-$containerBuilder->addDefinitions(__DIR__ . '/../app/container.php');
+$containerBuilder
+    ->addDefinitions(__DIR__ . '/../app/container.php')
+    ->useAttributes(true)
+;
 
 $app = AppFactory::createFromContainer($containerBuilder->build());
 
@@ -31,22 +33,23 @@ $app->addErrorMiddleware(true, false, false);
 //----------------------------------------------------------------
 // main routes
 //----------------------------------------------------------------
-$app->get('/', MainController::class . ':homepage');
+$app->get('/', [MainController::class, 'homepage']);
 
 //----------------------------------------------------------------
 // todo: Только для dev.
 // sandbox routes
 //----------------------------------------------------------------
-$app->get('/sandbox', MainSandboxController::class . ':main');
+$app->get('/sandbox', [MainSandboxController::class, 'main']);
 
 //----------------------------------------------------------------
 // todo: Только для dev.
 // test routes
 //----------------------------------------------------------------
 //todo: В phpunit.
-$app->get('/test/dump', MainTestController::class . ':testDump');
-$app->get('/test/project_path', MainTestController::class . ':testProjectDir');
-$app->get('/test/container/file_definitions', ContainerTestController::class . ':testFileDefinitions');
-$app->get('/test/pdo', MainTestController::class . ':testPdo');
+$app->get('/test/dump', [MainTestController::class, 'dump']);
+$app->get('/test/env', [MainTestController::class, 'env']);
+$app->get('/test/project_path', [MainTestController::class, 'projectPath']);
+$app->get('/test/container/inject', [MainTestController::class, 'inject']);
+$app->get('/test/pdo', [MainTestController::class, 'inject']);
 
 $app->run();
