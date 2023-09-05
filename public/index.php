@@ -51,5 +51,6 @@ $app->get('/test/env', [MainTestController::class, 'env']);
 $app->get('/test/project_path', [MainTestController::class, 'projectPath']);
 $app->get('/test/container/inject', [MainTestController::class, 'inject']);
 $app->get('/test/pdo', [MainTestController::class, 'inject']);
+$app->get('/test/render', [MainTestController::class, 'render']);
 
 $app->run();

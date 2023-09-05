@@ -1,6 +1,7 @@
 <?php
 
 use Source\ProjectPath;
+use Source\Render;
 use function DI\autowire;
 use function DI\env;
 use function DI\factory;
@@ -27,4 +28,9 @@ return [
         ->parameter('user', env('APP_DB_USER', null))
         ->parameter('password', env('APP_DB_PASSWORD', null))
     ,
+    Render::class => factory(function (ProjectPath $projectPath) {
+        return new Render(
+            $projectPath->build('/templates'),
+        );
+    }),
 ];

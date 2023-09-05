@@ -7,12 +7,14 @@ use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Source\ProjectPath;
+use Source\Render;
 
 class MainTestController
 {
     #[Inject] private ContainerInterface $container;
     #[Inject] private ProjectPath $projectPath;
     #[Inject] private \PDO $pdo;
+    #[Inject] private Render $render;
 
     public function dump(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface
     {
@@ -28,6 +30,7 @@ class MainTestController
             $this->container instanceof ContainerInterface,
             $this->projectPath instanceof ProjectPath,
             $this->pdo instanceof \PDO,
+            $this->render instanceof Render,
         ]);
 
         return $response;
@@ -54,6 +57,13 @@ class MainTestController
             $this->container->get('app.version'),
             $this->container->get('app.env'),
         );
+
+        return $response;
+    }
+
+    public function render(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface
+    {
+        $response->getBody()->write($this->render->render('test/main.twig'));
 
         return $response;
     }
